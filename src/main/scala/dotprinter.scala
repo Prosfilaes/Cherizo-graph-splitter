@@ -16,7 +16,7 @@ object dotPrinter {
       val outFile = new File (fullname)
       val output = new PrintWriter (outFile)
       val pageSize = sol.prob.pageSize
-      val page = sol.pointList.slice (pageSize * pageNum, pageSize * pageNum + pageSize - 1)
+      val page = sol.pointList.slice (pageSize * pageNum, pageSize * pageNum + pageSize)
       
       output.println ("graph G {")
       for (i <- page) {

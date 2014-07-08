@@ -9,7 +9,8 @@ object dotParse {
 
 def trim (s : String) : String = {
    def trimHead (s : String) : String = {
-      if (s.head == ' ') trimHead (s.tail)
+      if (s.isEmpty) s
+      else if (s.head == ' ') trimHead (s.tail)
       else s
    }
    def trimTail (s : String) : String = {
