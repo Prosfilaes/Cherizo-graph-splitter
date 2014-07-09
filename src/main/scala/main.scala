@@ -47,10 +47,19 @@ object Cherizo {
             dotPrinter.dotPrinter.printDot (ourDotGraph, newBestSol, args(2) + "_anneal_swap" + i)
          }
       }
-      val optimalSol = Solution.branchAndBound (newBestSol)
+      {
+         val system = ActorSystem("System")
+         val actor = system.actorOf(Props(new BranchAndBound (newBestSol)))
+         val future = actor ? BranchAndBoundActors.Start()
+         future.map { bestSol =>
+            newBestSol = bestSol;
+            system.shutdown
+         }
+      }
+      val optimalSol = newBestSol
       println ("Optimal: " + optimalSol.toString)
       println ("*Optimal value: " + optimalSol.cost.toString)
-      dotPrinter.dotPrinter.printDot (ourDotGraph, bestSol, args(2) + "_optimal")
+      dotPrinter.dotPrinter.printDot (ourDotGraph, optimalSol, args(2) + "_optimal")
    }
    
 }
