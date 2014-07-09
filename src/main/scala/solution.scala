@@ -33,7 +33,7 @@ final class Problem
       "the page size must divide the number of points")
 }
 
-abstract class Solution {
+sealed abstract class Solution {
    val prob : Problem
    protected val pointList : Vector[Int]
    // This is cost, not value, because less is better
