@@ -50,7 +50,7 @@ object Cherizo {
       val optimalSol = Solution.branchAndBound (newBestSol)
       println ("Optimal: " + optimalSol.toString)
       println ("*Optimal value: " + optimalSol.cost.toString)
-      dotPrinter.dotPrinter.printDot (ourDotGraph, bestSol, args(2) + "_optimal")
+      dotPrinter.dotPrinter.printDot (ourDotGraph, optimalSol, args(2) + "_optimal")
    }
    
 }
