@@ -18,6 +18,7 @@ object dotPrinter {
       val pageSize = sol.prob.pageSize
       val page = sol.pointList.slice (pageSize * pageNum, pageSize * pageNum + pageSize)
       
+      assert (page.length == pageSize)
       output.println ("graph G {")
       for (i <- page) {
          output.println ("n" + i + "[label=\"" + escapeChars (dg.names(i)) + "\"];")

@@ -1,4 +1,12 @@
 import Solution._
+import BranchAndBoundActors._
+import akka.actor.{ Actor, ActorRef, Props, ActorSystem }
+
+import akka.util.Timeout
+import scala.concurrent.duration._
+import akka.pattern.ask
+import akka.dispatch.ExecutionContexts._
+import scala.concurrent.Await
 
 object Cherizo {
    def main(args: Array[String]) : Unit = {
@@ -23,13 +31,14 @@ object Cherizo {
       
       var newBestSol = bestSol
       val startSwap = newBestSol.tryAllSwaps
+      println ("*Swapped: " + startSwap.toString)
       println ("*Swapped Value: " + startSwap.cost.toString)      
       if (startSwap.cost < newBestSol.cost) {
          newBestSol = startSwap
          dotPrinter.dotPrinter.printDot (ourDotGraph, newBestSol, args(2) + "_swap")
       }         
       // should probably be dependent on problem size; maybe ceil (1.6 * sqrt (ps))?
-      for (i <- Range (1, 12)) { 
+      for (i <- Range (1, 1)) { 
          println ("#" + i)
          // Perhaps each anneal should get a different solution; completely random?
          val simulatedAnneal = Solution.simulatedAnnealing (prob, bestSol.cost, i)
@@ -48,13 +57,13 @@ object Cherizo {
          }
       }
       {
+         implicit val timeout = Timeout(21474835.seconds)
          val system = ActorSystem("System")
          val actor = system.actorOf(Props(new BranchAndBound (newBestSol)))
          val future = actor ? BranchAndBoundActors.Start()
-         future.map { bestSol =>
-            newBestSol = bestSol;
-            system.shutdown
-         }
+         val result = Await.result(future, timeout.duration).asInstanceOf[BranchAndBoundActors.Complete]
+         newBestSol = result.s
+         system.shutdown
       }
       val optimalSol = newBestSol
       println ("Optimal: " + optimalSol.toString)
